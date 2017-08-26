@@ -4,7 +4,9 @@
 class engine {
 public:
     engine();
+    engine(engine const &) = delete;
     ~engine();
+    void operator=(engine const &) = delete;
     void loop();
 };
 
