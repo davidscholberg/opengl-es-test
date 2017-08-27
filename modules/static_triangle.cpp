@@ -8,6 +8,7 @@
 #include "modules/static_triangle.hpp"
 
 #define VERTEX_DEPTH 4
+#define VERTEX_COUNT 3
 
 const char *vertex_shader_source = R"glsl(
 #version 100
@@ -59,7 +60,13 @@ void static_triangle() {
     glVertexAttribPointer(position_attrib, VERTEX_DEPTH, GL_FLOAT, GL_FALSE, 0, 0);
     GLuint color_attrib = main_program.get_attrib_location("color");
     glEnableVertexAttribArray(color_attrib);
-    glVertexAttribPointer(color_attrib, VERTEX_DEPTH, GL_FLOAT, GL_FALSE, 0, (GLvoid*) (sizeof(GLfloat) * 12));
+    glVertexAttribPointer(
+            color_attrib,
+            VERTEX_DEPTH,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (GLvoid*) (sizeof(GLfloat) * VERTEX_DEPTH * VERTEX_COUNT));
 
     SDL_Event event;
     bool done = false;
@@ -67,7 +74,7 @@ void static_triangle() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
 
         main_window.swap();
 
