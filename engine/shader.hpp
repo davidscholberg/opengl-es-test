@@ -1,7 +1,7 @@
 #ifndef SHADER_HPP_
 #define SHADER_HPP_
 
-#include <GLES2/gl2.h>
+#include <SDL2/SDL_opengles2.h>
 
 class shader {
 protected:

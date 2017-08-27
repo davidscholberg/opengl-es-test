@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include <GLES2/gl2.h>
+#include <SDL2/SDL_opengles2.h>
 
 class vertex_buffer {
 protected:

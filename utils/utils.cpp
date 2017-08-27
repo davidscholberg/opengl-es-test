@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <GLES2/gl2.h>
+#include <SDL2/SDL_opengles2.h>
 
 #include "utils/utils.hpp"
 
