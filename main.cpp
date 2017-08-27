@@ -58,8 +58,6 @@ void loop() {
 
         main_window.swap();
 
-        SDL_Delay(10);
-
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 done = true;
