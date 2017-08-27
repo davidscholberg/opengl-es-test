@@ -41,18 +41,17 @@ void loop() {
             -0.5f, -0.5f, 0.0f, 1.0f});
     vertex_buffer triangle_vertices(std::move(triangle_vertex_vector));
 
+    main_program.use();
+    triangle_vertices.bind();
+    GLuint position_attrib = main_program.get_attrib_location("position");
+    glEnableVertexAttribArray(position_attrib);
+    glVertexAttribPointer(position_attrib, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
     SDL_Event event;
     bool done = false;
     while (!done) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        main_program.use();
-
-        triangle_vertices.bind();
-        GLuint position_attrib = main_program.get_attrib_location("position");
-        glEnableVertexAttribArray(position_attrib);
-        glVertexAttribPointer(position_attrib, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
