@@ -56,9 +56,6 @@ void loop() {
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glDisableVertexAttribArray(position_attrib);
-        main_program.clear();
-
         main_window.swap();
 
         SDL_Delay(10);
