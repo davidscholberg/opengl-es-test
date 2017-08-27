@@ -4,14 +4,11 @@
 #include <vector>
 
 #include "engine/shader.hpp"
-#include "utils/utils.hpp"
 
-shader::shader(GLenum shader_type, const char *shader_path) {
+shader::shader(GLenum shader_type, const char *shader_source) {
     this->shader_id = glCreateShader(shader_type);
 
-    auto shader_source = get_file_contents(shader_path);
-    const char *shader_source_str = shader_source->c_str();
-    glShaderSource(this->shader_id, 1, &shader_source_str, NULL);
+    glShaderSource(this->shader_id, 1, &shader_source, NULL);
 
     glCompileShader(this->shader_id);
     GLint shader_status;
@@ -22,9 +19,8 @@ shader::shader(GLenum shader_type, const char *shader_path) {
         std::vector<GLchar> info_log(info_log_length + 1);
         glGetShaderInfoLog(this->shader_id, info_log_length, NULL, &info_log[0]);
         throw std::runtime_error(
-                "glCompileShader error in "
-                + std::string(shader_path)
-                + ": " + std::string(&info_log[0])
+                "glCompileShader error: "
+                + std::string(&info_log[0])
         );
     }
 }
