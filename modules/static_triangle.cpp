@@ -7,12 +7,19 @@
 #include "engine/window.hpp"
 #include "modules/static_triangle.hpp"
 
+#define VERTEX_DEPTH 4
+
 const char *vertex_shader_source = R"glsl(
 #version 100
 
 attribute vec4 position;
+attribute vec4 color;
+
+varying vec4 fragment_color;
+
 void main() {
-    gl_Position = vec4(position);
+    fragment_color = color;
+    gl_Position = position;
 }
 )glsl";
 
@@ -20,8 +27,11 @@ const char *fragment_shader_source = R"glsl(
 #version 100
 
 precision mediump float;
+
+varying vec4 fragment_color;
+
 void main() {
-   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+   gl_FragColor = fragment_color;
 }
 )glsl";
 
@@ -36,14 +46,20 @@ void static_triangle() {
     auto triangle_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
             0.0f, 0.5f, 0.0f, 1.0f,
             0.5f, -0.5f, 0.0f, 1.0f,
-            -0.5f, -0.5f, 0.0f, 1.0f});
+            -0.5f, -0.5f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f});
     vertex_buffer triangle_vertices(std::move(triangle_vertex_vector));
 
     main_program.use();
     triangle_vertices.bind();
     GLuint position_attrib = main_program.get_attrib_location("position");
     glEnableVertexAttribArray(position_attrib);
-    glVertexAttribPointer(position_attrib, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(position_attrib, VERTEX_DEPTH, GL_FLOAT, GL_FALSE, 0, 0);
+    GLuint color_attrib = main_program.get_attrib_location("color");
+    glEnableVertexAttribArray(color_attrib);
+    glVertexAttribPointer(color_attrib, VERTEX_DEPTH, GL_FLOAT, GL_FALSE, 0, (GLvoid*) (sizeof(GLfloat) * 12));
 
     SDL_Event event;
     bool done = false;
