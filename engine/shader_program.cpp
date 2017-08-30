@@ -42,3 +42,7 @@ void shader_program::clear() {
 GLuint shader_program::get_attrib_location(const char *attrib) {
     return glGetAttribLocation(this->program_id, attrib);
 }
+
+GLuint shader_program::get_uniform_location(const char *uniform) {
+    return glGetUniformLocation(this->program_id, uniform);
+}

@@ -19,6 +19,7 @@ public:
     void use();
     void clear();
     GLuint get_attrib_location(const char *attrib);
+    GLuint get_uniform_location(const char *uniform);
 };
 
 

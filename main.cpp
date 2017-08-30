@@ -4,6 +4,7 @@
 
 #include "engine/engine.hpp"
 #include "modules/static_triangle.hpp"
+#include "modules/translated_triangle.hpp"
 
 int main(int argc, char **argv) {
     if (argc < 2) {
@@ -13,6 +14,7 @@ int main(int argc, char **argv) {
 
     std::unordered_map<std::string,void(*)()> module_map;
     module_map["static_triangle"] = static_triangle;
+    module_map["translated_triangle"] = translated_triangle;
 
     auto it = module_map.find(argv[1]);
     if (it == module_map.end()) {
