@@ -4,12 +4,12 @@
 #include <math.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengles2.h>
 
 #include "engine/shader.hpp"
 #include "engine/shader_program.hpp"
 #include "engine/vertex_buffer.hpp"
 #include "engine/window.hpp"
-#include "modules/rotated_square.hpp"
 
 #define VERTEX_DEPTH 4
 #define VERTEX_COUNT 4
@@ -19,7 +19,7 @@
 #define Y_ANGULAR_RATIO M_PI * 2.0f / Y_ROTATION_PERIOD
 #define Z_ANGULAR_RATIO M_PI * 2.0f / Z_ROTATION_PERIOD
 
-const char *rotated_square_vertex_shader_source = R"glsl(
+const char *vertex_shader_source = R"glsl(
 #version 100
 
 attribute vec4 position;
@@ -51,7 +51,7 @@ void main() {
 }
 )glsl";
 
-const char *rotated_square_fragment_shader_source = R"glsl(
+const char *fragment_shader_source = R"glsl(
 #version 100
 
 precision mediump float;
@@ -69,12 +69,12 @@ GLfloat get_rotation_angle(GLfloat rotation_period, GLfloat angular_ratio) {
     return angular_ratio * elapsed_period;
 }
 
-void rotated_square() {
+int main(int argc, char **argv) {
     window main_window;
 
     auto shaders = std::make_unique<std::vector<std::unique_ptr<shader>>>();
-    shaders->push_back(std::make_unique<shader>(GL_VERTEX_SHADER, rotated_square_vertex_shader_source));
-    shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, rotated_square_fragment_shader_source));
+    shaders->push_back(std::make_unique<shader>(GL_VERTEX_SHADER, vertex_shader_source));
+    shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
     shader_program main_program(std::move(shaders));
 
     auto square_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
