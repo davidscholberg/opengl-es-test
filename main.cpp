@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include "engine/engine.hpp"
+#include "modules/rotated_square.hpp"
 #include "modules/static_triangle.hpp"
 #include "modules/translated_triangle.hpp"
 
@@ -13,6 +14,7 @@ int main(int argc, char **argv) {
     }
 
     std::unordered_map<std::string,void(*)()> module_map;
+    module_map["rotated_square"] = rotated_square;
     module_map["static_triangle"] = static_triangle;
     module_map["translated_triangle"] = translated_triangle;
 
