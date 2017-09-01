@@ -4,5 +4,5 @@ Build the modules in the [modules](modules/) directory with the `make` command. 
 
 ## Resources
 
-* http://web.archive.org/web/20150317034545/http://www.arcsynthesis.org:80/gltut/index.html
+* http://opengl.datenwolf.net/gltut/html/index.html
 * https://learnopengl.com/
