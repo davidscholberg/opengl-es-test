@@ -11,6 +11,25 @@
 #include "engine/vertex_buffer.hpp"
 #include "engine/window.hpp"
 
+struct mat4 {
+    GLfloat c1_r1;
+    GLfloat c1_r2;
+    GLfloat c1_r3;
+    GLfloat c1_r4;
+    GLfloat c2_r1;
+    GLfloat c2_r2;
+    GLfloat c2_r3;
+    GLfloat c2_r4;
+    GLfloat c3_r1;
+    GLfloat c3_r2;
+    GLfloat c3_r3;
+    GLfloat c3_r4;
+    GLfloat c4_r1;
+    GLfloat c4_r2;
+    GLfloat c4_r3;
+    GLfloat c4_r4;
+};
+
 const char *vertex_shader_source = R"glsl(
 #version 100
 
@@ -19,40 +38,19 @@ attribute vec4 color;
 
 varying vec4 fragment_color;
 
-uniform float y_rotation_sin;
-uniform float y_rotation_cos;
-uniform float z_rotation_sin;
-uniform float z_rotation_cos;
+uniform mat4 y_rotation_matrix;
+uniform mat4 z_rotation_matrix;
 
-uniform vec3 offset;
-uniform float frustum_scale;
-uniform float z_mapping_factor;
-uniform float z_mapping_offset;
+uniform vec4 offset;
+
+uniform mat4 perspective_matrix;
 
 void main() {
     fragment_color = color;
 
-    mat3 y_rotation = mat3(
-        vec3(y_rotation_cos, 0.0, -y_rotation_sin),
-        vec3(0.0, 1.0, 0.0),
-        vec3(y_rotation_sin, 0.0, y_rotation_cos)
-    );
+    vec4 camera_position = (y_rotation_matrix * (z_rotation_matrix * position)) + offset;
 
-    mat3 z_rotation = mat3(
-        vec3(z_rotation_cos, z_rotation_sin, 0.0),
-        vec3(-z_rotation_sin, z_rotation_cos, 0.0),
-        vec3(0.0, 0.0, 1.0)
-    );
-
-    vec4 camera_position = vec4(
-        (position.xyz * z_rotation * y_rotation) + offset,
-        position.w
-    );
-    gl_Position = vec4(
-        camera_position.xy * frustum_scale,
-        (camera_position.z * z_mapping_factor) + z_mapping_offset,
-        -camera_position.z
-    );
+    gl_Position = perspective_matrix * camera_position;
 }
 )glsl";
 
@@ -214,20 +212,20 @@ int main(int argc, char **argv) {
             0,
             (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
 
-    GLint y_rotation_sin_uniform = main_program.get_uniform_location("y_rotation_sin");
-    GLint y_rotation_cos_uniform = main_program.get_uniform_location("y_rotation_cos");
-    GLint z_rotation_sin_uniform = main_program.get_uniform_location("z_rotation_sin");
-    GLint z_rotation_cos_uniform = main_program.get_uniform_location("z_rotation_cos");
-
     GLint offset_uniform = main_program.get_uniform_location("offset");
-    GLint frustum_scale_uniform = main_program.get_uniform_location("frustum_scale");
-    GLint z_mapping_factor_uniform = main_program.get_uniform_location("z_mapping_factor");
-    GLint z_mapping_offset_uniform = main_program.get_uniform_location("z_mapping_offset");
+    glUniform4f(offset_uniform, 0.0f, 0.0f, -2.0f, 0.0f);
 
-    glUniform3f(offset_uniform, 0.0f, 0.0f, -2.0f);
-    glUniform1f(frustum_scale_uniform, frustum_scale);
-    glUniform1f(z_mapping_factor_uniform, z_mapping_factor);
-    glUniform1f(z_mapping_offset_uniform, z_mapping_offset);
+    const mat4 perspective_matrix = {
+        frustum_scale, 0, 0, 0,
+        0, frustum_scale, 0, 0,
+        0, 0, z_mapping_factor, -1,
+        0, 0, z_mapping_offset, 0,
+    };
+    GLint perspective_matrix_uniform = main_program.get_uniform_location("perspective_matrix");
+    glUniformMatrix4fv(perspective_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &perspective_matrix);
+
+    GLint y_rotation_matrix_uniform = main_program.get_uniform_location("y_rotation_matrix");
+    GLint z_rotation_matrix_uniform = main_program.get_uniform_location("z_rotation_matrix");
 
     SDL_Event event;
     bool done = false;
@@ -237,10 +235,24 @@ int main(int argc, char **argv) {
 
         GLfloat y_rotation_angle = get_rotation_angle(y_rotation_period, y_angular_ratio);
         GLfloat z_rotation_angle = get_rotation_angle(z_rotation_period, z_angular_ratio);
-        glUniform1f(y_rotation_sin_uniform, sinf(y_rotation_angle));
-        glUniform1f(y_rotation_cos_uniform, cosf(y_rotation_angle));
-        glUniform1f(z_rotation_sin_uniform, sinf(z_rotation_angle));
-        glUniform1f(z_rotation_cos_uniform, cosf(z_rotation_angle));
+        GLfloat y_rotation_sin = sinf(y_rotation_angle);
+        GLfloat y_rotation_cos = cosf(y_rotation_angle);
+        GLfloat z_rotation_sin = sinf(z_rotation_angle);
+        GLfloat z_rotation_cos = cosf(z_rotation_angle);
+        const mat4 y_rotation_matrix = {
+            y_rotation_cos, 0, -y_rotation_sin, 0,
+            0, 1, 0, 0,
+            y_rotation_sin, 0, y_rotation_cos, 0,
+            0, 0, 0, 1,
+        };
+        const mat4 z_rotation_matrix = {
+            z_rotation_cos, z_rotation_sin, 0, 0,
+            -z_rotation_sin, z_rotation_cos, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        };
+        glUniformMatrix4fv(y_rotation_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &y_rotation_matrix);
+        glUniformMatrix4fv(z_rotation_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &z_rotation_matrix);
 
         glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 
