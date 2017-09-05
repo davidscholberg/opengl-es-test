@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
     shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
     shader_program main_program(std::move(shaders));
 
-    auto square_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
+    auto cube_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
             -0.5f, 0.5f, 0.5f, 1.0f,
             0.5f, 0.5f, 0.5f, 1.0f,
             -0.5f, -0.5f, 0.5f, 1.0f,
@@ -190,15 +190,15 @@ int main(int argc, char **argv) {
             1.0f, 0.0f, 1.0f, 1.0f,
             1.0f, 0.0f, 1.0f, 1.0f,
     });
-    const int vertex_count = square_vertex_vector->size() / vertex_depth / 2;
-    vertex_buffer square_vertices(std::move(square_vertex_vector));
+    const int vertex_count = cube_vertex_vector->size() / vertex_depth / 2;
+    vertex_buffer cube_vertices(std::move(cube_vertex_vector));
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);
 
     main_program.use();
-    square_vertices.bind();
+    cube_vertices.bind();
     GLint position_attrib = main_program.get_attrib_location("position");
     glEnableVertexAttribArray(position_attrib);
     glVertexAttribPointer(position_attrib, vertex_depth, GL_FLOAT, GL_FALSE, 0, 0);
