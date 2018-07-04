@@ -1,3 +1,4 @@
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -30,6 +31,13 @@ struct mat4 {
     GLfloat c4_r4;
 };
 
+struct vec4 {
+    GLfloat x;
+    GLfloat y;
+    GLfloat z;
+    GLfloat w;
+};
+
 const char *vertex_shader_source = R"glsl(
 #version 100
 
@@ -41,14 +49,15 @@ varying vec4 fragment_color;
 uniform mat4 y_rotation_matrix;
 uniform mat4 z_rotation_matrix;
 
-uniform vec4 offset;
+uniform vec4 object_offset;
+uniform vec4 camera_offset;
 
 uniform mat4 perspective_matrix;
 
 void main() {
     fragment_color = color;
 
-    vec4 camera_position = (y_rotation_matrix * (z_rotation_matrix * position)) + offset;
+    vec4 camera_position = (y_rotation_matrix * (z_rotation_matrix * position)) + object_offset + camera_offset;
 
     gl_Position = perspective_matrix * camera_position;
 }
@@ -73,9 +82,11 @@ const GLfloat z_rotation_period = 12.0f;
 const GLfloat y_angular_ratio = M_PI * 2.0f / y_rotation_period;
 const GLfloat z_angular_ratio = M_PI * 2.0f / z_rotation_period;
 
-const GLfloat frustum_scale = 1.0f;
-const GLfloat z_near = 1.0f;
-const GLfloat z_far = 3.0f;
+const GLfloat camera_speed = 1.0f;
+
+const GLfloat frustum_scale = 2.0f;
+const GLfloat z_near = 0.1f;
+const GLfloat z_far = 10.0f;
 const GLfloat z_mapping_factor = (z_near + z_far) / (z_near - z_far);
 const GLfloat z_mapping_offset = (2 * z_near * z_far) / (z_near - z_far);
 
@@ -212,8 +223,12 @@ int main(int argc, char **argv) {
             0,
             (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
 
-    GLint offset_uniform = main_program.get_uniform_location("offset");
-    glUniform4f(offset_uniform, 0.0f, 0.0f, -2.0f, 0.0f);
+    GLint object_offset_uniform = main_program.get_uniform_location("object_offset");
+    glUniform4f(object_offset_uniform, 0.0f, 0.0f, -2.0f, 0.0f);
+
+    vec4 camera_offset = {0, 0, 0, 0};
+    GLint camera_offset_uniform = main_program.get_uniform_location("camera_offset");
+    glUniform4fv(camera_offset_uniform, 1, (const GLfloat*) &camera_offset);
 
     const mat4 perspective_matrix = {
         frustum_scale, 0, 0, 0,
@@ -230,6 +245,23 @@ int main(int argc, char **argv) {
     SDL_Event event;
     bool done = false;
     while (!done) {
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    done = true;
+                    break;
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym) {
+                        case SDLK_LEFT:  camera_offset.x += 10.0/60.0; break;
+                        case SDLK_RIGHT: camera_offset.x -= 10.0/60.0; break;
+                        case SDLK_UP:    camera_offset.z += 10.0/60.0; break;
+                        case SDLK_DOWN:  camera_offset.z -= 10.0/60.0; break;
+                    }
+                    std::cout << camera_offset.z << std::endl;
+                    break;
+            }
+        }
+
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -254,14 +286,10 @@ int main(int argc, char **argv) {
         glUniformMatrix4fv(y_rotation_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &y_rotation_matrix);
         glUniformMatrix4fv(z_rotation_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &z_rotation_matrix);
 
+        glUniform4fv(camera_offset_uniform, 1, (const GLfloat*) &camera_offset);
+
         glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 
         main_window.swap();
-
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                done = true;
-            }
-        }
     }
 }
