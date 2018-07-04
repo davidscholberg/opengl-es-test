@@ -1,6 +1,8 @@
 This is a test repo for learning various OpenGL and C++ concepts.
 
-Build the modules in the [modules](modules/) directory with the `make` command. You'll need the OpenGL and SDL development packages.
+To build this project, navigate to the repo root and run `make`. This will generate a binary named `opengl-es-test`.
+
+You'll need the OpenGL and SDL development packages to build this project.
 
 To install the dependencies on Ubuntu/Debian:
 
