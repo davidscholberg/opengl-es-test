@@ -1,2 +1,4 @@
 .*.swp
-graphics
+.d
+*.o
+opengl-es-test
