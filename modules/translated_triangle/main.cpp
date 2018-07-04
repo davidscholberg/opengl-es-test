@@ -14,7 +14,7 @@
 #define VERTEX_DEPTH 4
 #define VERTEX_COUNT 3
 
-#define CIRCLE_PERIOD 0.25f
+#define CIRCLE_PERIOD 10.0f
 #define CIRCLE_RADIUS 0.7f
 #define ANGULAR_RATIO M_PI * 2.0f / CIRCLE_PERIOD
 
