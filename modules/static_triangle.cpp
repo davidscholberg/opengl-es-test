@@ -13,9 +13,6 @@
 namespace static_triangle {
     const std::string module_name("static_triangle");
 
-#define VERTEX_DEPTH 4
-#define VERTEX_COUNT 3
-
     const char *vertex_shader_source = R"glsl(
 #version 100
 
@@ -42,6 +39,8 @@ void main() {
 }
 )glsl";
 
+    const int vertex_depth = 4;
+
     int run(int argc, char **argv) {
         window main_window;
 
@@ -57,22 +56,23 @@ void main() {
                 1.0f, 0.0f, 0.0f, 1.0f,
                 0.0f, 1.0f, 0.0f, 1.0f,
                 0.0f, 0.0f, 1.0f, 1.0f});
+        const int vertex_count = triangle_vertex_vector->size() / vertex_depth / 2;
         vertex_buffer triangle_vertices(std::move(triangle_vertex_vector));
 
         main_program.use();
         triangle_vertices.bind();
         GLuint position_attrib = main_program.get_attrib_location("position");
         glEnableVertexAttribArray(position_attrib);
-        glVertexAttribPointer(position_attrib, VERTEX_DEPTH, GL_FLOAT, GL_FALSE, 0, 0);
+        glVertexAttribPointer(position_attrib, vertex_depth, GL_FLOAT, GL_FALSE, 0, 0);
         GLuint color_attrib = main_program.get_attrib_location("color");
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(
                 color_attrib,
-                VERTEX_DEPTH,
+                vertex_depth,
                 GL_FLOAT,
                 GL_FALSE,
                 0,
-                (GLvoid*) (sizeof(GLfloat) * VERTEX_DEPTH * VERTEX_COUNT));
+                (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
 
         SDL_Event event;
         bool done = false;
@@ -80,7 +80,7 @@ void main() {
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+            glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 
             main_window.swap();
 
