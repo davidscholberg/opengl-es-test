@@ -1,6 +1,7 @@
 #include <functional>
 #include <iostream>
-#include <unordered_map>
+#include <string>
+#include <map>
 
 #include "modules/static_triangle.hpp"
 #include "modules/translated_triangle.hpp"
@@ -8,20 +9,33 @@
 #include "modules/perspective_square.hpp"
 #include "modules/perspective_cube.hpp"
 
-int main(int argc, char **argv) {
-    if (argc < 2 || argv[1] == "-h" || argv[1] == "--help") {
-        std::cout << "usage: " << argv[0] << " <module-name> [args]" << std::endl;
-        std::cout << "e.g: " << argv[0] << " static_triangle" << std::endl;
-        return 0;
-    }
+typedef std::map<std::string, std::function<int(int, char**)>> str_to_func_map;
 
-    std::unordered_map<std::string, std::function<int(int, char**)>> function_map = {
+std::string format_module_names(const str_to_func_map &function_map) {
+    std::string module_names;
+    for (const auto &element : function_map) {
+        module_names += "    " + element.first + "\n";
+    }
+    return module_names;
+}
+
+int main(int argc, char **argv) {
+    str_to_func_map function_map = {
         {static_triangle::module_name, static_triangle::run},
         {translated_triangle::module_name, translated_triangle::run},
         {rotated_square::module_name, rotated_square::run},
         {perspective_square::module_name, perspective_square::run},
         {perspective_cube::module_name, perspective_cube::run},
     };
+
+    std::string help_short_opt("-h");
+    std::string help_long_opt("--help");
+    if (argc < 2 || argv[1] == help_short_opt || argv[1] == help_long_opt) {
+        std::cout << "usage: " << argv[0] << " <module-name> [args]" << std::endl;
+        std::cout << "available modules:" << std::endl;
+        std::cout << format_module_names(function_map);
+        return 0;
+    }
 
     auto module_func = function_map.find(argv[1]);
 
