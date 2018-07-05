@@ -15,13 +15,6 @@
 namespace translated_triangle {
     const std::string module_name("translated_triangle");
 
-#define VERTEX_DEPTH 4
-#define VERTEX_COUNT 3
-
-#define CIRCLE_PERIOD 10.0f
-#define CIRCLE_RADIUS 0.7f
-#define ANGULAR_RATIO M_PI * 2.0f / CIRCLE_PERIOD
-
     struct vec2 {
         GLfloat x;
         GLfloat y;
@@ -55,12 +48,17 @@ void main() {
 }
 )glsl";
 
+    const int vertex_depth = 4;
+    const float cirle_period = 10.0f;
+    const float cirle_radius = 0.7f;
+    const float angular_ratio = M_PI * 2.0f / cirle_period;
+
     void get_circular_offsets(vec2 *offsets) {
         GLfloat elapsed_time = SDL_GetTicks() / 1000.0f;
-        GLfloat elapsed_period = fmodf(elapsed_time, CIRCLE_PERIOD);
-        GLfloat angle = ANGULAR_RATIO * elapsed_period;
-        offsets->x = CIRCLE_RADIUS * cosf(angle);
-        offsets->y = CIRCLE_RADIUS * sinf(angle);
+        GLfloat elapsed_period = fmodf(elapsed_time, cirle_period);
+        GLfloat angle = angular_ratio * elapsed_period;
+        offsets->x = cirle_radius * cosf(angle);
+        offsets->y = cirle_radius * sinf(angle);
     }
 
     int run(int argc, char **argv) {
@@ -78,22 +76,23 @@ void main() {
                 1.0f, 0.0f, 0.0f, 1.0f,
                 0.0f, 1.0f, 0.0f, 1.0f,
                 0.0f, 0.0f, 1.0f, 1.0f});
+        const int vertex_count = triangle_vertex_vector->size() / vertex_depth / 2;
         vertex_buffer triangle_vertices(std::move(triangle_vertex_vector));
 
         main_program.use();
         triangle_vertices.bind();
         GLint position_attrib = main_program.get_attrib_location("position");
         glEnableVertexAttribArray(position_attrib);
-        glVertexAttribPointer(position_attrib, VERTEX_DEPTH, GL_FLOAT, GL_FALSE, 0, 0);
+        glVertexAttribPointer(position_attrib, vertex_depth, GL_FLOAT, GL_FALSE, 0, 0);
         GLint color_attrib = main_program.get_attrib_location("color");
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(
                 color_attrib,
-                VERTEX_DEPTH,
+                vertex_depth,
                 GL_FLOAT,
                 GL_FALSE,
                 0,
-                (GLvoid*) (sizeof(GLfloat) * VERTEX_DEPTH * VERTEX_COUNT));
+                (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
 
         GLint offset_uniform = main_program.get_uniform_location("offset");
         vec2 offsets;
@@ -107,7 +106,7 @@ void main() {
             get_circular_offsets(&offsets);
             glUniform2f(offset_uniform, offsets.x, offsets.y);
 
-            glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+            glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 
             main_window.swap();
 
