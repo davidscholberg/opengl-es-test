@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
 
+#include "engine/engine.hpp"
 #include "engine/shader.hpp"
 #include "engine/shader_program.hpp"
 #include "engine/vertex_buffer.hpp"
@@ -62,6 +63,7 @@ void main() {
     }
 
     int run(int argc, char **argv) {
+        engine e;
         window main_window;
 
         auto shaders = std::make_unique<std::vector<std::unique_ptr<shader>>>();
