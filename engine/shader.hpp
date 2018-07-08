@@ -10,10 +10,10 @@ protected:
     uint32_t shader_id;
 public:
     shader(GLenum shader_type, const char *shader_source);
-    shader(shader const &) = delete;
+    //shader(shader const &) = delete;
     ~shader();
-    void operator=(shader const &) = delete;
-    uint32_t get_shader_id();
+    //void operator=(shader const &) = delete;
+    uint32_t get_shader_id() const;
 };
 
 #endif // SHADER_HPP_

@@ -1,3 +1,4 @@
+#include <list>
 #include <memory>
 #include <vector>
 
@@ -48,20 +49,22 @@ void main() {
         engine e;
         window main_window;
 
-        auto shaders = std::make_unique<std::vector<std::unique_ptr<shader>>>();
-        shaders->push_back(std::make_unique<shader>(GL_VERTEX_SHADER, vertex_shader_source));
-        shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
-        shader_program main_program(std::move(shaders));
+        std::list<shader> shaders {
+            {GL_VERTEX_SHADER, vertex_shader_source},
+            {GL_FRAGMENT_SHADER, fragment_shader_source},
+        };
+        shader_program main_program(shaders);
 
-        auto triangle_vertex_vector = std::make_unique<std::vector<float>, std::initializer_list<float>>({
-                0.0f, 0.5f, 0.0f, 1.0f,
-                0.5f, -0.5f, 0.0f, 1.0f,
-                -0.5f, -0.5f, 0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f, 1.0f,
-                0.0f, 1.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f});
-        const int vertex_count = triangle_vertex_vector->size() / vertex_depth / 2;
-        vertex_buffer triangle_vertices(std::move(triangle_vertex_vector));
+        std::vector<float> triangle_vertex_vector {
+            0.0f, 0.5f, 0.0f, 1.0f,
+            0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f
+        };
+        const int vertex_count = triangle_vertex_vector.size() / vertex_depth / 2;
+        vertex_buffer triangle_vertices(triangle_vertex_vector);
 
         main_program.use();
         triangle_vertices.bind();

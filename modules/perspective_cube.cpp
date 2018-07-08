@@ -1,4 +1,5 @@
 #include <iostream>
+#include <list>
 #include <memory>
 #include <vector>
 
@@ -104,110 +105,111 @@ void main() {
     int run(int argc, char **argv) {
         window main_window;
 
-        auto shaders = std::make_unique<std::vector<std::unique_ptr<shader>>>();
-        shaders->push_back(std::make_unique<shader>(GL_VERTEX_SHADER, vertex_shader_source));
-        shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
-        shader_program main_program(std::move(shaders));
+        std::list<shader> shaders {
+            {GL_VERTEX_SHADER, vertex_shader_source},
+            {GL_FRAGMENT_SHADER, fragment_shader_source},
+        };
+        shader_program main_program(shaders);
 
-        auto cube_vertex_vector = std::make_unique<std::vector<float>, std::initializer_list<float>>({
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
+        std::vector<float> cube_vertex_vector {
+            -0.5f, 0.5f, 0.5f, 1.0f,
+            0.5f, 0.5f, 0.5f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 1.0f,
 
-                -0.5f, -0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 1.0f,
+            0.5f, 0.5f, 0.5f, 1.0f,
+            0.5f, -0.5f, 0.5f, 1.0f,
 
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f,
 
-                -0.5f, -0.5f, -0.5f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 1.0f,
 
-                -0.5f, -0.5f, 0.5f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 1.0f,
+            0.5f, -0.5f, 0.5f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f,
 
-                -0.5f, -0.5f, -0.5f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, 0.5f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f,
 
-                0.5f, 0.5f, -0.5f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f,
 
-                0.5f, -0.5f, -0.5f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f,
 
-                0.5f, 0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
+            0.5f, 0.5f, 0.5f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, 0.5f, 1.0f,
 
-                0.5f, -0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, 0.5f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f,
 
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 1.0f,
 
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f,
+            0.5f, 0.5f, 0.5f, 1.0f,
 
-                1.0f, 0.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
 
-                1.0f, 0.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
 
-                0.0f, 1.0f, 0.0f, 1.0f,
-                0.0f, 1.0f, 0.0f, 1.0f,
-                0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f,
 
-                0.0f, 1.0f, 0.0f, 1.0f,
-                0.0f, 1.0f, 0.0f, 1.0f,
-                0.0f, 1.0F, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f, 1.0F, 0.0f, 1.0f,
 
-                0.0f, 0.0f, 1.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
 
-                0.0f, 0.0f, 1.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f,
-                0.0f, 0.0F, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0F, 1.0f, 1.0f,
 
-                1.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f,
 
-                1.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f,
 
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f,
 
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f,
 
-                1.0f, 0.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f,
 
-                1.0f, 0.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 1.0f,
-        });
-        const int vertex_count = cube_vertex_vector->size() / vertex_depth / 2;
-        vertex_buffer cube_vertices(std::move(cube_vertex_vector));
+            1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f,
+        };
+        const int vertex_count = cube_vertex_vector.size() / vertex_depth / 2;
+        vertex_buffer cube_vertices(cube_vertex_vector);
 
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);

@@ -5,10 +5,10 @@
 
 #include "engine/vertex_buffer.hpp"
 
-vertex_buffer::vertex_buffer(std::unique_ptr<std::vector<float>> buffer) {
+vertex_buffer::vertex_buffer(const std::vector<float> &buffer) {
     glGenBuffers(1, &this->buffer_id);
     this->bind();
-    glBufferData(GL_ARRAY_BUFFER, buffer->size() * sizeof(float), buffer->data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, buffer.size() * sizeof(float), buffer.data(), GL_STATIC_DRAW);
     this->unbind();
 }
 
