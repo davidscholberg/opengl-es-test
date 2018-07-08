@@ -1,21 +1,22 @@
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include <SDL2/SDL_opengles2.h>
 
 #include "engine/shader_program.hpp"
 
-shader_program::shader_program(std::unique_ptr<std::vector<std::unique_ptr<shader>>> shaders) {
+shader_program::shader_program(const std::list<shader> &shaders) {
     this->program_id = glCreateProgram();
 
-    for(auto &shader : *shaders) {
-        glAttachShader(this->program_id, shader->get_shader_id());
+    for(const auto &shader : shaders) {
+        glAttachShader(this->program_id, shader.get_shader_id());
     }
 
     glLinkProgram(this->program_id);
 
-    for(auto &shader : *shaders) {
-        glDetachShader(this->program_id, shader->get_shader_id());
+    for(const auto &shader : shaders) {
+        glDetachShader(this->program_id, shader.get_shader_id());
     }
 
     int32_t program_status;

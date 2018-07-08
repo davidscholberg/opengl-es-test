@@ -13,7 +13,7 @@ public:
     shader(shader const &) = delete;
     ~shader();
     void operator=(shader const &) = delete;
-    uint32_t get_shader_id();
+    uint32_t get_shader_id() const;
 };
 
 #endif // SHADER_HPP_

@@ -1,8 +1,7 @@
 #ifndef SHADER_PROGRAM_HPP_
 #define SHADER_PROGRAM_HPP_
 
-#include <memory>
-#include <vector>
+#include <list>
 
 #include <stdint.h>
 
@@ -12,7 +11,7 @@ class shader_program {
 protected:
     uint32_t program_id;
 public:
-    shader_program(std::unique_ptr<std::vector<std::unique_ptr<shader>>> shaders);
+    shader_program(const std::list<shader> &shaders);
     shader_program(shader_program const &) = delete;
     ~shader_program();
     void operator=(shader_program const &) = delete;

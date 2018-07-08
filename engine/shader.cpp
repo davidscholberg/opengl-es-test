@@ -29,6 +29,6 @@ shader::~shader() {
     glDeleteShader(this->shader_id);
 }
 
-uint32_t shader::get_shader_id() {
+uint32_t shader::get_shader_id() const {
     return this->shader_id;
 }
