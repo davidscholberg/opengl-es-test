@@ -1,6 +1,8 @@
 #include <memory>
 #include <vector>
 
+#include <stdint.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
 
@@ -51,7 +53,7 @@ void main() {
         shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
         shader_program main_program(std::move(shaders));
 
-        auto triangle_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
+        auto triangle_vertex_vector = std::make_unique<std::vector<float>, std::initializer_list<float>>({
                 0.0f, 0.5f, 0.0f, 1.0f,
                 0.5f, -0.5f, 0.0f, 1.0f,
                 -0.5f, -0.5f, 0.0f, 1.0f,
@@ -63,10 +65,10 @@ void main() {
 
         main_program.use();
         triangle_vertices.bind();
-        GLuint position_attrib = main_program.get_attrib_location("position");
+        uint32_t position_attrib = main_program.get_attrib_location("position");
         glEnableVertexAttribArray(position_attrib);
         glVertexAttribPointer(position_attrib, vertex_depth, GL_FLOAT, GL_FALSE, 0, 0);
-        GLuint color_attrib = main_program.get_attrib_location("color");
+        uint32_t color_attrib = main_program.get_attrib_location("color");
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(
                 color_attrib,
@@ -74,7 +76,7 @@ void main() {
                 GL_FLOAT,
                 GL_FALSE,
                 0,
-                (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
+                (GLvoid*) (sizeof(float) * vertex_depth * vertex_count));
 
         SDL_Event event;
         bool done = false;

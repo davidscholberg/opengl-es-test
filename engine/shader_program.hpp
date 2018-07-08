@@ -4,13 +4,13 @@
 #include <memory>
 #include <vector>
 
-#include <SDL2/SDL_opengles2.h>
+#include <stdint.h>
 
 #include "engine/shader.hpp"
 
 class shader_program {
 protected:
-    GLuint program_id;
+    uint32_t program_id;
 public:
     shader_program(std::unique_ptr<std::vector<std::unique_ptr<shader>>> shaders);
     shader_program(shader_program const &) = delete;
@@ -18,8 +18,8 @@ public:
     void operator=(shader_program const &) = delete;
     void use();
     void clear();
-    GLuint get_attrib_location(const char *attrib);
-    GLuint get_uniform_location(const char *uniform);
+    uint32_t get_attrib_location(const char *attrib);
+    uint32_t get_uniform_location(const char *uniform);
 };
 
 

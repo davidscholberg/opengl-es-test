@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <math.h>
+#include <stdint.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
@@ -17,29 +18,29 @@ namespace perspective_cube {
     const std::string module_name("perspective_cube");
 
     struct mat4 {
-        GLfloat c1_r1;
-        GLfloat c1_r2;
-        GLfloat c1_r3;
-        GLfloat c1_r4;
-        GLfloat c2_r1;
-        GLfloat c2_r2;
-        GLfloat c2_r3;
-        GLfloat c2_r4;
-        GLfloat c3_r1;
-        GLfloat c3_r2;
-        GLfloat c3_r3;
-        GLfloat c3_r4;
-        GLfloat c4_r1;
-        GLfloat c4_r2;
-        GLfloat c4_r3;
-        GLfloat c4_r4;
+        float c1_r1;
+        float c1_r2;
+        float c1_r3;
+        float c1_r4;
+        float c2_r1;
+        float c2_r2;
+        float c2_r3;
+        float c2_r4;
+        float c3_r1;
+        float c3_r2;
+        float c3_r3;
+        float c3_r4;
+        float c4_r1;
+        float c4_r2;
+        float c4_r3;
+        float c4_r4;
     };
 
     struct vec4 {
-        GLfloat x;
-        GLfloat y;
-        GLfloat z;
-        GLfloat w;
+        float x;
+        float y;
+        float z;
+        float w;
     };
 
     const char *vertex_shader_source = R"glsl(
@@ -81,22 +82,22 @@ void main() {
 
     const int vertex_depth = 4;
 
-    const GLfloat y_rotation_period = 60.0f;
-    const GLfloat z_rotation_period = 12.0f;
-    const GLfloat y_angular_ratio = M_PI * 2.0f / y_rotation_period;
-    const GLfloat z_angular_ratio = M_PI * 2.0f / z_rotation_period;
+    const float y_rotation_period = 60.0f;
+    const float z_rotation_period = 12.0f;
+    const float y_angular_ratio = M_PI * 2.0f / y_rotation_period;
+    const float z_angular_ratio = M_PI * 2.0f / z_rotation_period;
 
-    const GLfloat camera_speed = 1.0f;
+    const float camera_speed = 1.0f;
 
-    const GLfloat frustum_scale = 2.0f;
-    const GLfloat z_near = 0.1f;
-    const GLfloat z_far = 10.0f;
-    const GLfloat z_mapping_factor = (z_near + z_far) / (z_near - z_far);
-    const GLfloat z_mapping_offset = (2 * z_near * z_far) / (z_near - z_far);
+    const float frustum_scale = 2.0f;
+    const float z_near = 0.1f;
+    const float z_far = 10.0f;
+    const float z_mapping_factor = (z_near + z_far) / (z_near - z_far);
+    const float z_mapping_offset = (2 * z_near * z_far) / (z_near - z_far);
 
-    GLfloat get_rotation_angle(GLfloat rotation_period, GLfloat angular_ratio) {
-        GLfloat elapsed_time = SDL_GetTicks() / 1000.0f;
-        GLfloat elapsed_period = fmodf(elapsed_time, rotation_period);
+    float get_rotation_angle(float rotation_period, float angular_ratio) {
+        float elapsed_time = SDL_GetTicks() / 1000.0f;
+        float elapsed_period = fmodf(elapsed_time, rotation_period);
         return angular_ratio * elapsed_period;
     }
 
@@ -108,7 +109,7 @@ void main() {
         shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
         shader_program main_program(std::move(shaders));
 
-        auto cube_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
+        auto cube_vertex_vector = std::make_unique<std::vector<float>, std::initializer_list<float>>({
                 -0.5f, 0.5f, 0.5f, 1.0f,
                 0.5f, 0.5f, 0.5f, 1.0f,
                 -0.5f, -0.5f, 0.5f, 1.0f,
@@ -214,10 +215,10 @@ void main() {
 
         main_program.use();
         cube_vertices.bind();
-        GLint position_attrib = main_program.get_attrib_location("position");
+        uint32_t position_attrib = main_program.get_attrib_location("position");
         glEnableVertexAttribArray(position_attrib);
         glVertexAttribPointer(position_attrib, vertex_depth, GL_FLOAT, GL_FALSE, 0, 0);
-        GLint color_attrib = main_program.get_attrib_location("color");
+        uint32_t color_attrib = main_program.get_attrib_location("color");
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(
                 color_attrib,
@@ -225,14 +226,14 @@ void main() {
                 GL_FLOAT,
                 GL_FALSE,
                 0,
-                (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
+                (GLvoid*) (sizeof(float) * vertex_depth * vertex_count));
 
-        GLint object_offset_uniform = main_program.get_uniform_location("object_offset");
+        uint32_t object_offset_uniform = main_program.get_uniform_location("object_offset");
         glUniform4f(object_offset_uniform, 0.0f, 0.0f, -2.0f, 0.0f);
 
         vec4 camera_offset = {0, 0, 0, 0};
-        GLint camera_offset_uniform = main_program.get_uniform_location("camera_offset");
-        glUniform4fv(camera_offset_uniform, 1, (const GLfloat*) &camera_offset);
+        uint32_t camera_offset_uniform = main_program.get_uniform_location("camera_offset");
+        glUniform4fv(camera_offset_uniform, 1, (const float*) &camera_offset);
 
         const mat4 perspective_matrix = {
             frustum_scale, 0, 0, 0,
@@ -240,11 +241,11 @@ void main() {
             0, 0, z_mapping_factor, -1,
             0, 0, z_mapping_offset, 0,
         };
-        GLint perspective_matrix_uniform = main_program.get_uniform_location("perspective_matrix");
-        glUniformMatrix4fv(perspective_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &perspective_matrix);
+        uint32_t perspective_matrix_uniform = main_program.get_uniform_location("perspective_matrix");
+        glUniformMatrix4fv(perspective_matrix_uniform, 1, GL_FALSE, (const float*) &perspective_matrix);
 
-        GLint y_rotation_matrix_uniform = main_program.get_uniform_location("y_rotation_matrix");
-        GLint z_rotation_matrix_uniform = main_program.get_uniform_location("z_rotation_matrix");
+        uint32_t y_rotation_matrix_uniform = main_program.get_uniform_location("y_rotation_matrix");
+        uint32_t z_rotation_matrix_uniform = main_program.get_uniform_location("z_rotation_matrix");
 
         SDL_Event event;
         bool done = false;
@@ -269,12 +270,12 @@ void main() {
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            GLfloat y_rotation_angle = get_rotation_angle(y_rotation_period, y_angular_ratio);
-            GLfloat z_rotation_angle = get_rotation_angle(z_rotation_period, z_angular_ratio);
-            GLfloat y_rotation_sin = sinf(y_rotation_angle);
-            GLfloat y_rotation_cos = cosf(y_rotation_angle);
-            GLfloat z_rotation_sin = sinf(z_rotation_angle);
-            GLfloat z_rotation_cos = cosf(z_rotation_angle);
+            float y_rotation_angle = get_rotation_angle(y_rotation_period, y_angular_ratio);
+            float z_rotation_angle = get_rotation_angle(z_rotation_period, z_angular_ratio);
+            float y_rotation_sin = sinf(y_rotation_angle);
+            float y_rotation_cos = cosf(y_rotation_angle);
+            float z_rotation_sin = sinf(z_rotation_angle);
+            float z_rotation_cos = cosf(z_rotation_angle);
             const mat4 y_rotation_matrix = {
                 y_rotation_cos, 0, -y_rotation_sin, 0,
                 0, 1, 0, 0,
@@ -287,10 +288,10 @@ void main() {
                 0, 0, 1, 0,
                 0, 0, 0, 1,
             };
-            glUniformMatrix4fv(y_rotation_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &y_rotation_matrix);
-            glUniformMatrix4fv(z_rotation_matrix_uniform, 1, GL_FALSE, (const GLfloat*) &z_rotation_matrix);
+            glUniformMatrix4fv(y_rotation_matrix_uniform, 1, GL_FALSE, (const float*) &y_rotation_matrix);
+            glUniformMatrix4fv(z_rotation_matrix_uniform, 1, GL_FALSE, (const float*) &z_rotation_matrix);
 
-            glUniform4fv(camera_offset_uniform, 1, (const GLfloat*) &camera_offset);
+            glUniform4fv(camera_offset_uniform, 1, (const float*) &camera_offset);
 
             glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 

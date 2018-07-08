@@ -2,6 +2,7 @@
 #include <vector>
 
 #include <math.h>
+#include <stdint.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
@@ -67,9 +68,9 @@ void main() {
 }
 )glsl";
 
-    GLfloat get_rotation_angle(GLfloat rotation_period, GLfloat angular_ratio) {
-        GLfloat elapsed_time = SDL_GetTicks() / 1000.0f;
-        GLfloat elapsed_period = fmodf(elapsed_time, rotation_period);
+    float get_rotation_angle(float rotation_period, float angular_ratio) {
+        float elapsed_time = SDL_GetTicks() / 1000.0f;
+        float elapsed_period = fmodf(elapsed_time, rotation_period);
         return angular_ratio * elapsed_period;
     }
 
@@ -81,7 +82,7 @@ void main() {
         shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
         shader_program main_program(std::move(shaders));
 
-        auto square_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
+        auto square_vertex_vector = std::make_unique<std::vector<float>, std::initializer_list<float>>({
                 0.5f, 0.5f, 0.0f, 1.0f,
                 -0.5f, 0.5f, 0.0f, 1.0f,
                 -0.5f, -0.5f, 0.0f, 1.0f,
@@ -94,10 +95,10 @@ void main() {
 
         main_program.use();
         square_vertices.bind();
-        GLint position_attrib = main_program.get_attrib_location("position");
+        uint32_t position_attrib = main_program.get_attrib_location("position");
         glEnableVertexAttribArray(position_attrib);
         glVertexAttribPointer(position_attrib, VERTEX_DEPTH, GL_FLOAT, GL_FALSE, 0, 0);
-        GLint color_attrib = main_program.get_attrib_location("color");
+        uint32_t color_attrib = main_program.get_attrib_location("color");
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(
                 color_attrib,
@@ -105,12 +106,12 @@ void main() {
                 GL_FLOAT,
                 GL_FALSE,
                 0,
-                (GLvoid*) (sizeof(GLfloat) * VERTEX_DEPTH * VERTEX_COUNT));
+                (GLvoid*) (sizeof(float) * VERTEX_DEPTH * VERTEX_COUNT));
 
-        GLint y_rotation_sin_uniform = main_program.get_uniform_location("y_rotation_sin");
-        GLint y_rotation_cos_uniform = main_program.get_uniform_location("y_rotation_cos");
-        GLint z_rotation_sin_uniform = main_program.get_uniform_location("z_rotation_sin");
-        GLint z_rotation_cos_uniform = main_program.get_uniform_location("z_rotation_cos");
+        uint32_t y_rotation_sin_uniform = main_program.get_uniform_location("y_rotation_sin");
+        uint32_t y_rotation_cos_uniform = main_program.get_uniform_location("y_rotation_cos");
+        uint32_t z_rotation_sin_uniform = main_program.get_uniform_location("z_rotation_sin");
+        uint32_t z_rotation_cos_uniform = main_program.get_uniform_location("z_rotation_cos");
 
         SDL_Event event;
         bool done = false;
@@ -118,8 +119,8 @@ void main() {
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            GLfloat y_rotation_angle = get_rotation_angle(Y_ROTATION_PERIOD, Y_ANGULAR_RATIO);
-            GLfloat z_rotation_angle = get_rotation_angle(Z_ROTATION_PERIOD, Z_ANGULAR_RATIO);
+            float y_rotation_angle = get_rotation_angle(Y_ROTATION_PERIOD, Y_ANGULAR_RATIO);
+            float z_rotation_angle = get_rotation_angle(Z_ROTATION_PERIOD, Z_ANGULAR_RATIO);
             glUniform1f(y_rotation_sin_uniform, sinf(y_rotation_angle));
             glUniform1f(y_rotation_cos_uniform, cosf(y_rotation_angle));
             glUniform1f(z_rotation_sin_uniform, sinf(z_rotation_angle));

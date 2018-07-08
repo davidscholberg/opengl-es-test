@@ -1,12 +1,14 @@
 #include <stdexcept>
 #include <string>
 
+#include <SDL2/SDL_opengles2.h>
+
 #include "engine/vertex_buffer.hpp"
 
-vertex_buffer::vertex_buffer(std::unique_ptr<std::vector<GLfloat>> buffer) {
+vertex_buffer::vertex_buffer(std::unique_ptr<std::vector<float>> buffer) {
     glGenBuffers(1, &this->buffer_id);
     this->bind();
-    glBufferData(GL_ARRAY_BUFFER, buffer->size() * sizeof(GLfloat), buffer->data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, buffer->size() * sizeof(float), buffer->data(), GL_STATIC_DRAW);
     this->unbind();
 }
 

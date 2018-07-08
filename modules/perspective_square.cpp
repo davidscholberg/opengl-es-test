@@ -2,6 +2,7 @@
 #include <vector>
 
 #include <math.h>
+#include <stdint.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
@@ -75,20 +76,20 @@ void main() {
     const int vertex_depth = 4;
     const int vertex_count = 4;
 
-    const GLfloat y_rotation_period = 5.0f;
-    const GLfloat z_rotation_period = 1.0f;
-    const GLfloat y_angular_ratio = M_PI * 2.0f / y_rotation_period;
-    const GLfloat z_angular_ratio = M_PI * 2.0f / z_rotation_period;
+    const float y_rotation_period = 5.0f;
+    const float z_rotation_period = 1.0f;
+    const float y_angular_ratio = M_PI * 2.0f / y_rotation_period;
+    const float z_angular_ratio = M_PI * 2.0f / z_rotation_period;
 
-    const GLfloat frustum_scale = 1.0f;
-    const GLfloat z_near = 1.0f;
-    const GLfloat z_far = 3.0f;
-    const GLfloat z_mapping_factor = (z_near + z_far) / (z_near - z_far);
-    const GLfloat z_mapping_offset = (2 * z_near * z_far) / (z_near - z_far);
+    const float frustum_scale = 1.0f;
+    const float z_near = 1.0f;
+    const float z_far = 3.0f;
+    const float z_mapping_factor = (z_near + z_far) / (z_near - z_far);
+    const float z_mapping_offset = (2 * z_near * z_far) / (z_near - z_far);
 
-    GLfloat get_rotation_angle(GLfloat rotation_period, GLfloat angular_ratio) {
-        GLfloat elapsed_time = SDL_GetTicks() / 1000.0f;
-        GLfloat elapsed_period = fmodf(elapsed_time, rotation_period);
+    float get_rotation_angle(float rotation_period, float angular_ratio) {
+        float elapsed_time = SDL_GetTicks() / 1000.0f;
+        float elapsed_period = fmodf(elapsed_time, rotation_period);
         return angular_ratio * elapsed_period;
     }
 
@@ -100,7 +101,7 @@ void main() {
         shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
         shader_program main_program(std::move(shaders));
 
-        auto square_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
+        auto square_vertex_vector = std::make_unique<std::vector<float>, std::initializer_list<float>>({
                 0.5f, 0.5f, 0.0f, 1.0f,
                 -0.5f, 0.5f, 0.0f, 1.0f,
                 -0.5f, -0.5f, 0.0f, 1.0f,
@@ -113,10 +114,10 @@ void main() {
 
         main_program.use();
         square_vertices.bind();
-        GLint position_attrib = main_program.get_attrib_location("position");
+        uint32_t position_attrib = main_program.get_attrib_location("position");
         glEnableVertexAttribArray(position_attrib);
         glVertexAttribPointer(position_attrib, vertex_depth, GL_FLOAT, GL_FALSE, 0, 0);
-        GLint color_attrib = main_program.get_attrib_location("color");
+        uint32_t color_attrib = main_program.get_attrib_location("color");
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(
                 color_attrib,
@@ -124,17 +125,17 @@ void main() {
                 GL_FLOAT,
                 GL_FALSE,
                 0,
-                (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
+                (GLvoid*) (sizeof(float) * vertex_depth * vertex_count));
 
-        GLint y_rotation_sin_uniform = main_program.get_uniform_location("y_rotation_sin");
-        GLint y_rotation_cos_uniform = main_program.get_uniform_location("y_rotation_cos");
-        GLint z_rotation_sin_uniform = main_program.get_uniform_location("z_rotation_sin");
-        GLint z_rotation_cos_uniform = main_program.get_uniform_location("z_rotation_cos");
+        uint32_t y_rotation_sin_uniform = main_program.get_uniform_location("y_rotation_sin");
+        uint32_t y_rotation_cos_uniform = main_program.get_uniform_location("y_rotation_cos");
+        uint32_t z_rotation_sin_uniform = main_program.get_uniform_location("z_rotation_sin");
+        uint32_t z_rotation_cos_uniform = main_program.get_uniform_location("z_rotation_cos");
 
-        GLint offset_uniform = main_program.get_uniform_location("offset");
-        GLint frustum_scale_uniform = main_program.get_uniform_location("frustum_scale");
-        GLint z_mapping_factor_uniform = main_program.get_uniform_location("z_mapping_factor");
-        GLint z_mapping_offset_uniform = main_program.get_uniform_location("z_mapping_offset");
+        uint32_t offset_uniform = main_program.get_uniform_location("offset");
+        uint32_t frustum_scale_uniform = main_program.get_uniform_location("frustum_scale");
+        uint32_t z_mapping_factor_uniform = main_program.get_uniform_location("z_mapping_factor");
+        uint32_t z_mapping_offset_uniform = main_program.get_uniform_location("z_mapping_offset");
 
         glUniform3f(offset_uniform, 0.0f, 0.0f, -2.0f);
         glUniform1f(frustum_scale_uniform, frustum_scale);
@@ -147,8 +148,8 @@ void main() {
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            GLfloat y_rotation_angle = get_rotation_angle(y_rotation_period, y_angular_ratio);
-            GLfloat z_rotation_angle = get_rotation_angle(z_rotation_period, z_angular_ratio);
+            float y_rotation_angle = get_rotation_angle(y_rotation_period, y_angular_ratio);
+            float z_rotation_angle = get_rotation_angle(z_rotation_period, z_angular_ratio);
             glUniform1f(y_rotation_sin_uniform, sinf(y_rotation_angle));
             glUniform1f(y_rotation_cos_uniform, cosf(y_rotation_angle));
             glUniform1f(z_rotation_sin_uniform, sinf(z_rotation_angle));

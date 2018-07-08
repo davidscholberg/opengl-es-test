@@ -4,13 +4,13 @@
 #include <memory>
 #include <vector>
 
-#include <SDL2/SDL_opengles2.h>
+#include <stdint.h>
 
 class vertex_buffer {
 protected:
-    GLuint buffer_id;
+    uint32_t buffer_id;
 public:
-    vertex_buffer(std::unique_ptr<std::vector<GLfloat>> buffer);
+    vertex_buffer(std::unique_ptr<std::vector<float>> buffer);
     vertex_buffer(vertex_buffer const &) = delete;
     ~vertex_buffer();
     void operator=(vertex_buffer const &) = delete;

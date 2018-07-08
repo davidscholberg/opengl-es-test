@@ -2,6 +2,7 @@
 #include <vector>
 
 #include <math.h>
+#include <stdint.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
@@ -17,8 +18,8 @@ namespace movable_square {
     const std::string module_name("movable_square");
 
     struct vec2 {
-        GLfloat x;
-        GLfloat y;
+        float x;
+        float y;
     };
 
     const char *vertex_shader_source = R"glsl(
@@ -67,7 +68,7 @@ void main() {
         shaders->push_back(std::make_unique<shader>(GL_FRAGMENT_SHADER, fragment_shader_source));
         shader_program main_program(std::move(shaders));
 
-        auto square_vertex_vector = std::make_unique<std::vector<GLfloat>, std::initializer_list<GLfloat>>({
+        auto square_vertex_vector = std::make_unique<std::vector<float>, std::initializer_list<float>>({
                 0.1f, 0.1f, 0.0f, 1.0f,
                 -0.1f, 0.1f, 0.0f, 1.0f,
                 -0.1f, -0.1f, 0.0f, 1.0f,
@@ -81,10 +82,10 @@ void main() {
 
         main_program.use();
         square_vertices.bind();
-        GLint position_attrib = main_program.get_attrib_location("position");
+        uint32_t position_attrib = main_program.get_attrib_location("position");
         glEnableVertexAttribArray(position_attrib);
         glVertexAttribPointer(position_attrib, vertex_depth, GL_FLOAT, GL_FALSE, 0, 0);
-        GLint color_attrib = main_program.get_attrib_location("color");
+        uint32_t color_attrib = main_program.get_attrib_location("color");
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(
                 color_attrib,
@@ -92,9 +93,9 @@ void main() {
                 GL_FLOAT,
                 GL_FALSE,
                 0,
-                (GLvoid*) (sizeof(GLfloat) * vertex_depth * vertex_count));
+                (GLvoid*) (sizeof(float) * vertex_depth * vertex_count));
 
-        GLint offset_uniform = main_program.get_uniform_location("offset");
+        uint32_t offset_uniform = main_program.get_uniform_location("offset");
         vec2 offsets;
 
         SDL_Event event;
