@@ -42,10 +42,10 @@ void shader_program::clear() {
     glUseProgram(0);
 }
 
-uint32_t shader_program::get_attrib_location(const char *attrib) {
+uint32_t shader_program::get_attrib_location(const char *attrib) const {
     return glGetAttribLocation(this->program_id, attrib);
 }
 
-uint32_t shader_program::get_uniform_location(const char *uniform) {
+uint32_t shader_program::get_uniform_location(const char *uniform) const {
     return glGetUniformLocation(this->program_id, uniform);
 }

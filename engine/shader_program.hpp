@@ -17,8 +17,8 @@ public:
     void operator=(shader_program const &) = delete;
     void use();
     void clear();
-    uint32_t get_attrib_location(const char *attrib);
-    uint32_t get_uniform_location(const char *uniform);
+    uint32_t get_attrib_location(const char *attrib) const;
+    uint32_t get_uniform_location(const char *uniform) const;
 };
 
 

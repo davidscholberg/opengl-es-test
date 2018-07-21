@@ -10,6 +10,7 @@
 
 #include "engine/drawable.hpp"
 #include "engine/engine.hpp"
+#include "engine/scene.hpp"
 #include "engine/shader.hpp"
 #include "engine/shader_program.hpp"
 #include "engine/vertex_buffer.hpp"
@@ -90,11 +91,12 @@ void main() {
             1.0f, 0.0f, 0.0f, 1.0f
         };
 
-        auto square_1 = std::make_shared<drawable>(square_1_vertex_vector, vertex_depth, main_program);
-        auto square_2 = std::make_shared<drawable>(square_2_vertex_vector, vertex_depth, main_program);
-        std::list<std::shared_ptr<drawable>> drawables;
-        drawables.push_back(square_1);
-        drawables.push_back(square_2);
+        auto square_1 = std::make_shared<drawable>(square_1_vertex_vector, vertex_depth, *main_program);
+        auto square_2 = std::make_shared<drawable>(square_2_vertex_vector, vertex_depth, *main_program);
+        auto drawables = std::make_shared<std::list<std::shared_ptr<drawable>>>();
+        drawables->push_back(square_1);
+        drawables->push_back(square_2);
+        scene squares(drawables, main_program);
 
         SDL_Event event;
         bool done = false;
@@ -159,9 +161,7 @@ void main() {
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            for (const auto &d : drawables) {
-                d->draw();
-            }
+            squares.draw();
 
             main_window.swap();
         }
