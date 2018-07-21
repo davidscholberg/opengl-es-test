@@ -4,6 +4,7 @@
 #include <map>
 
 #include "modules/movable_square.hpp"
+#include "modules/movable_squares.hpp"
 #include "modules/perspective_cube.hpp"
 #include "modules/perspective_square.hpp"
 #include "modules/rotated_square.hpp"
@@ -23,6 +24,7 @@ std::string format_module_names(const str_to_func_map &function_map) {
 int main(int argc, char **argv) {
     str_to_func_map function_map = {
         {movable_square::module_name, movable_square::run},
+        {movable_squares::module_name, movable_squares::run},
         {perspective_cube::module_name, perspective_cube::run},
         {perspective_square::module_name, perspective_square::run},
         {rotated_square::module_name, rotated_square::run},
