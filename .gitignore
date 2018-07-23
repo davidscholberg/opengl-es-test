@@ -1,4 +1,2 @@
 .*.swp
-.d
-*.o
-opengl-es-test
+build/
