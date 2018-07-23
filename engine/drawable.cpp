@@ -3,7 +3,7 @@
 #include "engine/drawable.hpp"
 
 drawable::drawable(const std::vector<float> &vertex_vector, const int vertex_depth, const shader_program &program)
-    : vertices(vertex_vector), vertex_depth(vertex_depth) {
+    : vertices(vertex_vector), vertex_depth(vertex_depth), offset_x(0), offset_y(0), offset_z(0) {
     this->vertex_count = vertex_vector.size() / this->vertex_depth / 2;
 
     this->position_attrib = program.get_attrib_location("position");
