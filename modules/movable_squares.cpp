@@ -10,6 +10,7 @@
 
 #include "engine/drawable.hpp"
 #include "engine/engine.hpp"
+#include "engine/keyboard_state.hpp"
 #include "engine/scene.hpp"
 #include "engine/shader.hpp"
 #include "engine/shader_program.hpp"
@@ -51,15 +52,6 @@ void main() {
     const int vertex_depth = 4;
     const float square_unit_offset = 0.025f;
 
-    bool up_pressed = 0;
-    bool left_pressed = 0;
-    bool down_pressed = 0;
-    bool right_pressed = 0;
-    bool w_pressed = 0;
-    bool a_pressed = 0;
-    bool s_pressed = 0;
-    bool d_pressed = 0;
-
     int run(int argc, char **argv) {
         engine e;
         window main_window;
@@ -98,6 +90,8 @@ void main() {
         drawables->push_back(square_2);
         scene squares(drawables, main_program);
 
+        keyboard_state kb;
+
         SDL_Event event;
         bool done = false;
         while (!done) {
@@ -107,54 +101,34 @@ void main() {
                         done = true;
                         break;
                     case SDL_KEYDOWN:
-                        switch (event.key.keysym.sym) {
-                            case SDLK_UP:    up_pressed = 1; break;
-                            case SDLK_LEFT:  left_pressed = 1; break;
-                            case SDLK_DOWN:  down_pressed = 1; break;
-                            case SDLK_RIGHT: right_pressed = 1; break;
-                            case SDLK_w: w_pressed = 1; break;
-                            case SDLK_a: a_pressed = 1; break;
-                            case SDLK_s: s_pressed = 1; break;
-                            case SDLK_d: d_pressed = 1; break;
-                        }
-                        break;
                     case SDL_KEYUP:
-                        switch (event.key.keysym.sym) {
-                            case SDLK_UP:    up_pressed = 0; break;
-                            case SDLK_LEFT:  left_pressed = 0; break;
-                            case SDLK_DOWN:  down_pressed = 0; break;
-                            case SDLK_RIGHT: right_pressed = 0; break;
-                            case SDLK_w: w_pressed = 0; break;
-                            case SDLK_a: a_pressed = 0; break;
-                            case SDLK_s: s_pressed = 0; break;
-                            case SDLK_d: d_pressed = 0; break;
-                        }
+                        kb.update_state(event.type, event.key.keysym.sym);
                         break;
                 }
             }
 
-            if (up_pressed) {
+            if (kb.get_up_pressed()) {
                 square_1->update_offsets(0, square_unit_offset, 0);
             }
-            if (left_pressed) {
+            if (kb.get_left_pressed()) {
                 square_1->update_offsets(-square_unit_offset, 0, 0);
             }
-            if (down_pressed) {
+            if (kb.get_down_pressed()) {
                 square_1->update_offsets(0, -square_unit_offset, 0);
             }
-            if (right_pressed) {
+            if (kb.get_right_pressed()) {
                 square_1->update_offsets(square_unit_offset, 0, 0);
             }
-            if (w_pressed) {
+            if (kb.get_w_pressed()) {
                 square_2->update_offsets(0, square_unit_offset, 0);
             }
-            if (a_pressed) {
+            if (kb.get_a_pressed()) {
                 square_2->update_offsets(-square_unit_offset, 0, 0);
             }
-            if (s_pressed) {
+            if (kb.get_s_pressed()) {
                 square_2->update_offsets(0, -square_unit_offset, 0);
             }
-            if (d_pressed) {
+            if (kb.get_d_pressed()) {
                 square_2->update_offsets(square_unit_offset, 0, 0);
             }
 
